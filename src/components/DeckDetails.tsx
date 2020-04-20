@@ -7,7 +7,7 @@ import { RootState } from "../store";
 import { getDeck } from "../store/deck/actions";
 import { Card } from "../store/deck/types";
 import { orderCardsByRotation } from "../util/cards";
-import DeckCard from "./Card";
+import DeckCard from "./DeckCard";
 
 const useStyles = makeStyles({
   header: {
@@ -25,11 +25,17 @@ const useStyles = makeStyles({
     backgroundColor: "#DFF4F7",
     flexGrow: 1,
   },
-  cardContainer: {
+  cardsContainer: {
     display: "flex",
+    flexWrap: "wrap",
     border: "1px #0000FF",
     backgroundColor: "#D8D8D8",
     padding: 20,
+    width: 950,
+    margin: "40px auto 0 auto",
+  },
+  cardContainer: {
+    margin: 20,
   },
 });
 
@@ -58,10 +64,14 @@ const DeckDetails = () => {
       <div className={classes.header}>
         <h1 className={classes.text}>Ordered Pile</h1>
       </div>
-      <div className={classes.cardContainer}>
+      <div className={classes.cardsContainer}>
         {orderedCards.length &&
           orderedCards.map((card) => {
-            return <DeckCard card={card} />;
+            return (
+              <div className={classes.cardContainer}>
+                <DeckCard card={card} />
+              </div>
+            );
           })}
       </div>
     </div>

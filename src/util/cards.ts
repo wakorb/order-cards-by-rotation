@@ -18,7 +18,7 @@ const VALUES_SEQUENCE = [
 ];
 
 interface RankMap {
-  [suit: string]: number;
+  [key: string]: number;
 }
 
 export const orderCardsByRotation = (cards: Card[], rotation: Card): Card[] => {

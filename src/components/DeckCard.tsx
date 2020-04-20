@@ -3,10 +3,6 @@ import { makeStyles } from "@material-ui/styles";
 
 import { Card } from "../store/deck/types";
 
-interface JssClasses {
-  [jssClass: string]: object;
-}
-
 const useStyles = makeStyles({
   card: {
     width: 150,
