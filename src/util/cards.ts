@@ -21,7 +21,7 @@ interface RankMap {
   [suit: string]: number;
 }
 
-const orderCardsByRotation = (cards: Card[], rotation: Card): Card[] => {
+export const orderCardsByRotation = (cards: Card[], rotation: Card): Card[] => {
   const suitRanks: RankMap = {};
 
   const suitCount = SUIT_SEQUENCE.length;
@@ -43,6 +43,8 @@ const orderCardsByRotation = (cards: Card[], rotation: Card): Card[] => {
   }
 
   const compareCards = (a: Card, b: Card) => {
+    // this might look a little backwards to a normal compare, but note we're sorting
+    // by sequence rankings
     if (suitRanks[a.suit] > suitRanks[b.suit]) {
       return -1;
     } else if (suitRanks[a.suit] < suitRanks[b.suit]) {
@@ -63,4 +65,12 @@ const orderCardsByRotation = (cards: Card[], rotation: Card): Card[] => {
   return orderedCards;
 };
 
-export default orderCardsByRotation;
+export const findFullHouseCombinations = (cards: Card[]): string[][] => {
+  const combinations: string[][] = [];
+
+  // there can't be any full houses without at least 5 cards.
+  if (cards.length >= 5) {
+  }
+
+  return combinations;
+};

@@ -6,7 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { getDeck } from "../store/deck/actions";
 import { Card } from "../store/deck/types";
-import orderCardsByRotation from "../util/cards";
+import { orderCardsByRotation } from "../util/cards";
+import DeckCard from "./Card";
 
 const useStyles = makeStyles({
   header: {
@@ -23,6 +24,12 @@ const useStyles = makeStyles({
     flexDirection: "column",
     backgroundColor: "#DFF4F7",
     flexGrow: 1,
+  },
+  cardContainer: {
+    display: "flex",
+    border: "1px #0000FF",
+    backgroundColor: "#D8D8D8",
+    padding: 20,
   },
 });
 
@@ -50,6 +57,12 @@ const DeckDetails = () => {
     <div className={classes.root}>
       <div className={classes.header}>
         <h1 className={classes.text}>Ordered Pile</h1>
+      </div>
+      <div className={classes.cardContainer}>
+        {orderedCards.length &&
+          orderedCards.map((card) => {
+            return <DeckCard card={card} />;
+          })}
       </div>
     </div>
   );

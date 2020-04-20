@@ -64,8 +64,21 @@ export interface Deck {
 export interface Card {
   code: string;
   image: string;
-  value: string;
-  suit: string;
+  value:
+    | "2"
+    | "A"
+    | "K"
+    | "Q"
+    | "J"
+    | "10"
+    | "9"
+    | "8"
+    | "7"
+    | "6"
+    | "5"
+    | "4"
+    | "3";
+  suit: "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES";
 }
 
 export interface CardPile {
