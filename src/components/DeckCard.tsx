@@ -1,11 +1,15 @@
 import React from "react";
 import { makeStyles } from "@material-ui/styles";
+import clsx from "clsx";
 
 import { Card } from "../store/deck/types";
 
 const useStyles = makeStyles({
   card: {
     width: 150,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
     height: 220,
     borderRadius: 10,
     background: "#fff",
@@ -22,6 +26,15 @@ const useStyles = makeStyles({
   },
   SPADES: {
     color: "#000",
+  },
+  cardTop: {
+    fontSize: 35,
+    padding: "6px 0px 0px 12px",
+  },
+  cardBottom: {
+    fontSize: 35,
+    transform: "rotate(180deg)",
+    padding: "6px 0px 0px 12px",
   },
 });
 
@@ -42,8 +55,13 @@ const DeckCard = (props: DeckCardProps) => {
 
   return (
     <div className={classes.card}>
-      <div className={classes[card.suit]}>{SUIT_ICONS[card.suit]}</div>
-      {card.value}
+      <div className={clsx(classes.cardTop, classes[card.suit])}>{`${
+        card.value[0]
+      } ${SUIT_ICONS[card.suit]}`}</div>
+
+      <div className={clsx(classes.cardBottom, classes[card.suit])}>{`${
+        card.value[0]
+      } ${SUIT_ICONS[card.suit]}`}</div>
     </div>
   );
 };
