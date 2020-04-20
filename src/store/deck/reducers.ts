@@ -2,9 +2,6 @@ import {
   CREATE_DECK_STARTED,
   CREATE_DECK_SUCCEEDED,
   CREATE_DECK_FAILED,
-  CREATE_DECK_PILE_STARTED,
-  CREATE_DECK_PILE_SUCCEEDED,
-  CREATE_DECK_PILE_FAILED,
   GET_DECK_STARTED,
   GET_DECK_SUCCEEDED,
   GET_DECK_FAILED,
@@ -13,8 +10,8 @@ import {
 } from "./types";
 
 const initialState: DeckState = {
-  byId: {},
-  allIds: [],
+  deck: undefined,
+  lastCreatedDeckId: "",
   createDeckPending: false,
   createDeckError: "",
   getDeckLoading: false,
@@ -31,36 +28,17 @@ const deckReducer = (
       newState = {
         ...state,
         createDeckPending: true,
+        lastCreatedDeckId: "",
       };
       return newState;
     case CREATE_DECK_SUCCEEDED:
       newState = {
         ...state,
         createDeckPending: false,
-        // add the deck to byId and allIds
+        lastCreatedDeckId: action.deckId,
       };
       return newState;
     case CREATE_DECK_FAILED:
-      newState = {
-        ...state,
-        createDeckPending: false,
-        createDeckError: action.error,
-      };
-      return newState;
-    case CREATE_DECK_PILE_STARTED:
-      newState = {
-        ...state,
-        createDeckPending: true,
-      };
-      return newState;
-    case CREATE_DECK_PILE_SUCCEEDED:
-      newState = {
-        ...state,
-        createDeckPending: false,
-        // add the deck to byId and allIds
-      };
-      return newState;
-    case CREATE_DECK_PILE_FAILED:
       newState = {
         ...state,
         createDeckPending: false,
@@ -74,10 +52,10 @@ const deckReducer = (
       };
       return newState;
     case GET_DECK_SUCCEEDED:
-      console.log(action);
       newState = {
         ...state,
         getDeckLoading: false,
+        deck: action.deck,
       };
       return newState;
     case GET_DECK_FAILED:

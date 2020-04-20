@@ -5,22 +5,22 @@ import {
   CREATE_DECK_STARTED,
   CREATE_DECK_SUCCEEDED,
   CREATE_DECK_FAILED,
-  CREATE_DECK_PILE_STARTED,
-  CREATE_DECK_PILE_SUCCEEDED,
-  CREATE_DECK_PILE_FAILED,
   GET_DECK_STARTED,
   GET_DECK_SUCCEEDED,
   GET_DECK_FAILED,
   DeckActionTypes,
+  Deck,
+  PileListResponse,
+  CardPile,
 } from "./types";
 
 const onCreateDeckStarted = (): DeckActionTypes => ({
   type: CREATE_DECK_STARTED,
 });
 
-const onCreateDeckSucceeded = (payload: any): DeckActionTypes => ({
+const onCreateDeckSucceeded = (deckId: string): DeckActionTypes => ({
   type: CREATE_DECK_SUCCEEDED,
-  payload,
+  deckId,
 });
 
 const onCreateDeckFailed = (error: string): DeckActionTypes => ({
@@ -28,27 +28,13 @@ const onCreateDeckFailed = (error: string): DeckActionTypes => ({
   error,
 });
 
-const onCreateDeckPileStarted = (): DeckActionTypes => ({
-  type: CREATE_DECK_PILE_STARTED,
-});
-
-const onCreateDeckPileSucceeded = (payload: any): DeckActionTypes => ({
-  type: CREATE_DECK_PILE_SUCCEEDED,
-  payload,
-});
-
-const onCreateDeckPileFailed = (error: string): DeckActionTypes => ({
-  type: CREATE_DECK_PILE_FAILED,
-  error,
-});
-
 const onGetDeckStarted = (): DeckActionTypes => ({
   type: GET_DECK_STARTED,
 });
 
-const onGetDeckSucceeded = (payload: any): DeckActionTypes => ({
+const onGetDeckSucceeded = (deck: Deck): DeckActionTypes => ({
   type: GET_DECK_SUCCEEDED,
-  payload,
+  deck,
 });
 
 const onGetDeckFailed = (error: string): DeckActionTypes => ({
@@ -56,37 +42,54 @@ const onGetDeckFailed = (error: string): DeckActionTypes => ({
   error,
 });
 
-export const createDeck = (): AppThunk => (dispatch) => {
-  dispatch(onCreateDeckStarted());
-  return axios
-    .post("deck/new")
-    .then((response) => {
-      if (response.status !== 200) {
-        throw Error(response.statusText);
-      }
-      dispatch(onCreateDeckSucceeded(response));
-      return response.data;
-    })
-    .catch((error) => {
-      const { response } = error;
-      dispatch(onCreateDeckPileFailed(response));
-      throw error;
-    });
-};
-
-export const createDeckPile = (deckId: string, cards: string[]): AppThunk => (
+export const createDeck = (cards: string[], rotationCard: string): AppThunk => (
   dispatch
 ) => {
-  dispatch(onCreateDeckPileStarted());
-  let url = `deck/${deckId}/pile/default/add/?cards=${cards.toString()}`;
+  dispatch(onCreateDeckStarted());
+
+  // first we want to create a deck with only the specified cards
+  // next we want to draw all the cards from the deck so we can insert them into piles
+  // then we create a pile to store the cards
+  // also create a pile to store the rotation
+
   return axios
-    .post(url)
+    .get(`deck/new/shuffle/?cards=${cards.toString()},${rotationCard}`)
     .then((response) => {
       if (response.status !== 200) {
         throw Error(response.statusText);
       }
-      dispatch(onCreateDeckPileSucceeded(response));
-      return response.data;
+
+      const {
+        data: { deck_id },
+      } = response;
+
+      const drawCardsUrl = `deck/${deck_id}/draw/?count=${cards.length + 1}`;
+
+      const cardsPileUrl = `deck/${deck_id}/pile/cards/add/?cards=${cards.toString()}`;
+      const rotationPileUrl = `deck/${deck_id}/pile/rotation/add/?cards=${rotationCard}`;
+
+      axios.get(drawCardsUrl).then((drawRes) => {
+        if (drawRes.status !== 200) {
+          throw Error(response.statusText);
+        }
+
+        axios.get(cardsPileUrl).then((addCardsRes) => {
+          if (addCardsRes.status !== 200) {
+            throw Error(addCardsRes.statusText);
+          }
+
+          axios.get(rotationPileUrl).then((addRotationRes) => {
+            if (addRotationRes.status !== 200) {
+              throw Error(addRotationRes.statusText);
+            }
+
+            // ideally the create calls would be useful and return the created deck and
+            // piles, which we could then cacdhe in redux
+
+            dispatch(onCreateDeckSucceeded(deck_id));
+          });
+        });
+      });
     })
     .catch((error) => {
       const { response } = error;
@@ -95,17 +98,40 @@ export const createDeckPile = (deckId: string, cards: string[]): AppThunk => (
     });
 };
 
-// need to auto set limit and offset in the case that params are supplied but without limit/offset
 export const getDeck = (deckId: string): AppThunk => (dispatch) => {
   dispatch(onGetDeckStarted());
-  const url = `deck/${deckId}/pile/default/list`;
+  const cardsPileUrl = `deck/${deckId}/pile/cards/list`;
+  const rotationPileUrl = `deck/${deckId}/pile/rotation/list`;
   return axios
-    .get(url)
-    .then((response) => {
-      if (response.status !== 200) {
-        throw Error(response.statusText);
+    .get(cardsPileUrl)
+    .then((cardsRes) => {
+      if (cardsRes.status !== 200) {
+        throw Error(cardsRes.statusText);
       }
-      dispatch(onGetDeckSucceeded(response));
+
+      const deck: Deck = {
+        deckId,
+        cards: [],
+      };
+
+      const cardPileList: PileListResponse = cardsRes.data;
+      const cardPile: CardPile = cardPileList.piles.cards;
+
+      deck.cards = cardPile.cards;
+
+      axios.get(rotationPileUrl).then((rotationRes) => {
+        if (rotationRes.status !== 200) {
+          throw Error(rotationRes.statusText);
+        }
+
+        const rotationPileList: PileListResponse = rotationRes.data;
+        const rotationPile: CardPile = rotationPileList.piles.rotation;
+
+        // this is not ideal practice, but since the API is less than ideal
+        // and we're enforcing assumptions through hardcoding...
+        deck.rotationCard = rotationPile.cards[0];
+        dispatch(onGetDeckSucceeded(deck));
+      });
     })
     .catch((error) => {
       const { response } = error;

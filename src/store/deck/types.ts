@@ -16,25 +16,11 @@ interface CreateDeckStartedAction {
 
 interface CreateDeckSucceededAction {
   type: typeof CREATE_DECK_SUCCEEDED;
-  payload: any;
+  deckId: string;
 }
 
 interface CreateDeckFailedAction {
   type: typeof CREATE_DECK_FAILED;
-  error: string;
-}
-
-interface CreateDeckPileStartedAction {
-  type: typeof CREATE_DECK_PILE_STARTED;
-}
-
-interface CreateDeckPileSucceededAction {
-  type: typeof CREATE_DECK_PILE_SUCCEEDED;
-  payload: any;
-}
-
-interface CreateDeckPileFailedAction {
-  type: typeof CREATE_DECK_PILE_FAILED;
   error: string;
 }
 
@@ -44,7 +30,7 @@ interface GetDeckStartedAction {
 
 interface GetDeckSucceededAction {
   type: typeof GET_DECK_SUCCEEDED;
-  payload: any;
+  deck: Deck;
 }
 
 interface GetDeckFailedAction {
@@ -56,18 +42,41 @@ export type DeckActionTypes =
   | CreateDeckStartedAction
   | CreateDeckSucceededAction
   | CreateDeckFailedAction
-  | CreateDeckPileStartedAction
-  | CreateDeckPileSucceededAction
-  | CreateDeckPileFailedAction
   | GetDeckStartedAction
   | GetDeckSucceededAction
   | GetDeckFailedAction;
 
 export interface DeckState {
-  byId: object;
-  allIds: string[];
+  deck?: Deck;
+  lastCreatedDeckId: string;
   createDeckPending: boolean;
   createDeckError: string;
   getDeckLoading: boolean;
   getDeckError: string;
+}
+
+export interface Deck {
+  deckId: string;
+  rotationCard?: Card;
+  cards: Card[];
+}
+
+export interface Card {
+  code: string;
+  image: string;
+  value: string;
+  suit: string;
+}
+
+export interface CardPile {
+  cards: Card[];
+}
+
+export interface PileListResponse {
+  success: boolean;
+  deck_id: string;
+  remaining: number;
+  piles: {
+    [pile: string]: CardPile;
+  };
 }
