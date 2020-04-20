@@ -11,9 +11,53 @@ import { RootState } from "../store";
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
-  },
-  flex: {
     display: "flex",
+    flexDirection: "column",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    flexGrow: 1,
+  },
+  flexGrow: {
+    flexGrow: 1,
+  },
+  fieldsContainer: {
+    display: "flex",
+    flexWrap: "wrap",
+    margin: "40px auto 0 auto",
+    width: 1360,
+  },
+  fieldContainer: {
+    margin: 10,
+  },
+  submit: {
+    backgroundColor: "#1C0063",
+    color: "#FBE500",
+    fontSize: 40,
+    padding: "10px 55px",
+    border: "none",
+    borderRadius: 25,
+    fontFamily: "sans-serif",
+    margin: "0 auto 70px auto",
+    display: "block",
+  },
+  rotationContainer: {
+    margin: "50px auto",
+    padding: "0 50px 0 0",
+    width: 600,
+    display: "flex",
+  },
+  rotationText: {
+    fontSize: 36,
+    display: "inline-block",
+    fontFamily: "sans-serif",
+    textAlign: "right",
+  },
+  rotationInput: {
+    display: "inline-block",
+    margin: "0 0 0 15px",
+    verticalAlign: "middle",
   },
 });
 
@@ -45,6 +89,8 @@ const initialValues: DeckFormValues = {
   card10: "",
   rotation: "",
 };
+
+const fields: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const CreateDeckForm = () => {
   const classes = useStyles();
@@ -79,27 +125,33 @@ const CreateDeckForm = () => {
   return (
     <div className={classes.root}>
       <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-        <Form>
-          <div className={classes.flex}>
-            <FormField name="card1" label="CARD 1" placeholder="Enter card" />
-            <FormField name="card2" label="CARD 2" placeholder="Enter card" />
-            <FormField name="card3" label="CARD 3" placeholder="Enter card" />
-            <FormField name="card4" label="CARD 4" placeholder="Enter card" />
-            <FormField name="card5" label="CARD 5" placeholder="Enter card" />
+        <Form className={classes.form}>
+          <div className={classes.fieldsContainer}>
+            {fields.map((fieldNumber) => {
+              return (
+                <div className={classes.fieldContainer}>
+                  <FormField
+                    name={`card${fieldNumber}`}
+                    label={`CARD ${fieldNumber}`}
+                    placeholder="Enter card"
+                  />
+                </div>
+              );
+            })}
           </div>
-          <div className={classes.flex}>
-            <FormField name="card6" label="CARD 6" placeholder="Enter card" />
-            <FormField name="card7" label="CARD 7" placeholder="Enter card" />
-            <FormField name="card8" label="CARD 8" placeholder="Enter card" />
-            <FormField name="card9" label="CARD 9" placeholder="Enter card" />
-            <FormField name="card10" label="CARD 10" placeholder="Enter card" />
+          <div className={classes.rotationContainer}>
+            <label className={classes.rotationText}>Rotation Card</label>
+            <FormField
+              className={classes.rotationInput}
+              name="rotation"
+              placeholder="Enter card"
+            />
           </div>
-          <FormField
-            name="rotation"
-            label="Rotation Card"
-            placeholder="Enter card"
-          />
-          <button type="submit">Submit</button>
+          <div className={classes.flexGrow} />
+
+          <button className={classes.submit} type="submit">
+            Submit
+          </button>
         </Form>
       </Formik>
     </div>

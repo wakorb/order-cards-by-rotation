@@ -28,7 +28,7 @@ const useStyles = makeStyles({
   cardsContainer: {
     display: "flex",
     flexWrap: "wrap",
-    border: "1px #0000FF",
+    border: "2px solid #979797",
     backgroundColor: "#D8D8D8",
     padding: 20,
     width: 950,
