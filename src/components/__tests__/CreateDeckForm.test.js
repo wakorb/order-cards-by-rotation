@@ -1,9 +1,9 @@
 import React from "react";
 import { shallow } from "enzyme";
-import App from "./App";
+import CreateDeckForm from "../CreateDeckForm";
 
-describe("<App />", () => {
+describe("DeckCard", () => {
   it("renders without crashing", () => {
-    shallow(<App />);
+    shallow(<CreateDeckForm />);
   });
 });

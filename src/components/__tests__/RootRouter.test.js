@@ -1,9 +1,9 @@
 import React from "react";
 import { shallow } from "enzyme";
-import App from "./App";
+import RootRouter from "../RootRouter";
 
-describe("<App />", () => {
+describe("RootRouter", () => {
   it("renders without crashing", () => {
-    shallow(<App />);
+    shallow(<RootRouter />);
   });
 });
