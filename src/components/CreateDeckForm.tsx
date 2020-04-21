@@ -44,7 +44,7 @@ const useStyles = makeStyles({
   },
   rotationContainer: {
     margin: "50px auto",
-    padding: "0 50px 0 0",
+    padding: "0 130px 0 0",
     width: 600,
     display: "flex",
   },
