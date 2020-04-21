@@ -47,6 +47,7 @@ const FormField = (props: FormFieldProps) => {
       {label && <label className={classes.label}>{label}</label>}
       <input
         className={classes.input}
+        name={name}
         id={id}
         placeholder={placeholder}
         {...field}

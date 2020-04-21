@@ -64,16 +64,17 @@ const DeckDetails = () => {
       <div className={classes.header}>
         <h1 className={classes.text}>Ordered Pile</h1>
       </div>
-      <div className={classes.cardsContainer}>
-        {orderedCards.length &&
-          orderedCards.map((card) => {
+      {orderedCards.length > 0 && (
+        <div className={classes.cardsContainer}>
+          {orderedCards.map((card) => {
             return (
               <div className={classes.cardContainer}>
                 <DeckCard card={card} />
               </div>
             );
           })}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
