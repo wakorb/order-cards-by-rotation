@@ -21,6 +21,21 @@ interface RankMap {
   [key: string]: number;
 }
 
+const factorial = (n: number): number => {
+  let f = 1;
+  let numbers: number[] = [];
+
+  for (let i = 0; i < n; i++) {
+    numbers.push(n - i);
+  }
+
+  numbers.forEach((number) => {
+    f *= number;
+  });
+
+  return f;
+};
+
 export const orderCardsByRotation = (cards: Card[], rotation: Card): Card[] => {
   const suitRanks: RankMap = {};
 
@@ -63,6 +78,44 @@ export const orderCardsByRotation = (cards: Card[], rotation: Card): Card[] => {
   const orderedCards = cards.sort(compareCards);
 
   return orderedCards;
+};
+
+export const countFullHouseCombinations = (cards: Card[]): number => {
+  let fullHouses = 0;
+
+  const rankMap: RankMap = {};
+
+  cards.forEach((card) => {
+    // use value[0], so we dont have to map fully qualified strings to single char codes
+    if (card.value[0] in rankMap) {
+      rankMap[card.value[0]] += 1;
+    } else {
+      rankMap[card.value[0]] = 1;
+    }
+  });
+
+  Object.keys(rankMap).forEach((tripleKey) => {
+    if (rankMap[tripleKey] >= 3) {
+      // we have the possibility for a full house
+      Object.keys(rankMap).forEach((doubleKey) => {
+        if (tripleKey !== doubleKey && rankMap[doubleKey] >= 2) {
+          // we have a full house, let's count how many combinations
+
+          const tripleCombinations =
+            factorial(rankMap[tripleKey]) /
+            (factorial(3) * factorial(rankMap[tripleKey] - 3));
+
+          const doubleCombinations =
+            factorial(rankMap[doubleKey]) /
+            (factorial(2) * factorial(rankMap[doubleKey] - 2));
+
+          fullHouses += tripleCombinations * doubleCombinations;
+        }
+      });
+    }
+  });
+
+  return fullHouses;
 };
 
 export const findFullHouseCombinations = (cards: Card[]): string[][] => {

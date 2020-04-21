@@ -6,7 +6,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { getDeck } from "../store/deck/actions";
 import { Card } from "../store/deck/types";
-import { orderCardsByRotation } from "../util/cards";
+import {
+  orderCardsByRotation,
+  countFullHouseCombinations,
+} from "../util/cards";
 import DeckCard from "./DeckCard";
 
 const useStyles = makeStyles({
@@ -64,16 +67,20 @@ const DeckDetails = () => {
       <div className={classes.header}>
         <h1 className={classes.text}>Ordered Pile</h1>
       </div>
-      {orderedCards.length > 0 && (
-        <div className={classes.cardsContainer}>
-          {orderedCards.map((card) => {
-            return (
-              <div className={classes.cardContainer}>
-                <DeckCard card={card} />
-              </div>
-            );
-          })}
-        </div>
+      {deck && orderedCards.length > 0 && (
+        <>
+          <div className={classes.cardsContainer}>
+            {orderedCards.map((card) => {
+              return (
+                <div className={classes.cardContainer}>
+                  <DeckCard card={card} />
+                </div>
+              );
+            })}
+          </div>
+          <div>High Card: {orderedCards[0].code}</div>
+          <div>Full House Combo: {countFullHouseCombinations(deck.cards)}</div>
+        </>
       )}
     </div>
   );
