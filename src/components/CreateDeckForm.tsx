@@ -129,7 +129,7 @@ const CreateDeckForm = () => {
           <div className={classes.fieldsContainer}>
             {fields.map((fieldNumber) => {
               return (
-                <div className={classes.fieldContainer}>
+                <div key={fieldNumber} className={classes.fieldContainer}>
                   <FormField
                     name={`card${fieldNumber}`}
                     label={`CARD ${fieldNumber}`}

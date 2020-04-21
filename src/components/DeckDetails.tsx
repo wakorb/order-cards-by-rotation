@@ -40,6 +40,12 @@ const useStyles = makeStyles({
   cardContainer: {
     margin: 20,
   },
+  detailsText: {
+    fontSize: 36,
+    display: "inline-block",
+    fontFamily: "sans-serif",
+    margin: "40px auto 0 auto",
+  },
 });
 
 const DeckDetails = () => {
@@ -72,14 +78,18 @@ const DeckDetails = () => {
           <div className={classes.cardsContainer}>
             {orderedCards.map((card) => {
               return (
-                <div className={classes.cardContainer}>
+                <div key={card.code} className={classes.cardContainer}>
                   <DeckCard card={card} />
                 </div>
               );
             })}
           </div>
-          <div>High Card: {orderedCards[0].code}</div>
-          <div>Full House Combo: {countFullHouseCombinations(deck.cards)}</div>
+          <div className={classes.detailsText}>
+            High Card: {orderedCards[0].code}
+          </div>
+          <div className={classes.detailsText}>
+            Full House Combo: {countFullHouseCombinations(deck.cards)}
+          </div>
         </>
       )}
     </div>
